@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Staff Payroll Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5;
+        }
+        .payslip-card {
+            transition: transform 0.2s;
+        }
+        .payslip-card:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div id="login-section" class="min-h-screen flex items-center justify-center">
+        <div class="bg-white p-8 rounded-lg shadow-lg w-96">
+            <div class="text-center mb-8">
+                <i class="bi bi-hospital text-4xl text-blue-600"></i>
+                <h1 class="text-2xl font-bold mt-2">Staff Payroll Portal</h1>
+            </div>
+            <form id="login-form" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Employee ID</label>
+                    <input type="text" id="employee-id" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Password</label>
+                    <input type="password" id="password" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border" required>
+                </div>
+                <button type="submit" class="w-full bg-blue-600 text-white rounded-md py-2 hover:bg-blue-700 transition duration-200">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="dashboard-section" class="hidden min-h-screen bg-gray-100">
+        <nav class="bg-white shadow-lg">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="flex justify-between h-16">
+                    <div class="flex items-center">
+                        <i class="bi bi-hospital text-2xl text-blue-600"></i>
+                        <span class="ml-2 font-semibold text-xl">Payroll Dashboard</span>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <span id="user-name" class="text-gray-700"></span>
+                        <button id="logout-btn" class="text-gray-600 hover:text-gray-800">
+                            <i class="bi bi-box-arrow-right"></i> Logout
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <main class="max-w-7xl mx-auto py-6 px-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Summary Cards -->
+                <div class="bg-white rounded-lg shadow p-6">
+                    <h2 class="text-lg font-semibold mb-4">Current Month Earnings</h2>
+                    <p class="text-3xl font-bold text-green-600">$<span id="current-earnings">0.00</span></p>
+                </div>
+                <div class="bg-white rounded-lg shadow p-6">
+                    <h2 class="text-lg font-semibold mb-4">YTD Earnings</h2>
+                    <p class="text-3xl font-bold text-blue-600">$<span id="ytd-earnings">0.00</span></p>
+                </div>
+                <div class="bg-white rounded-lg shadow p-6">
+                    <h2 class="text-lg font-semibold mb-4">Next Pay Date</h2>
+                    <p class="text-3xl font-bold text-gray-800" id="next-pay-date">--/--/----</p>
+                </div>
+            </div>
+
+            <!-- Payslips Section -->
+            <div class="mt-8">
+                <h2 class="text-2xl font-semibold mb-4">Recent Payslips</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="payslips-container">
+                    <!-- Payslips will be dynamically added here -->
+                </div>
+            </div>
+
+            <!-- Pay Request Form -->
+            <div class="mt-8 bg-white rounded-lg shadow p-6">
+                <h2 class="text-2xl font-semibold mb-4">Submit Pay Request</h2>
+                <form id="pay-request-form" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Request Type</label>
+                        <select class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border">
+                            <option>Salary Adjustment</option>
+                            <option>Benefits Query</option>
+                            <option>Tax Related</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Description</label>
+                        <textarea class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border" rows="4"></textarea>
+                    </div>
+                    <button type="submit" class="bg-blue-600 text-white rounded-md py-2 px-4 hover:bg-blue-700 transition duration-200">Submit Request</button>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Mock data
+        const mockUser = {
+            id: "EMP123",
+            password: "password123",
+            name: "John Doe",
+            currentEarnings: 5250.00,
+            ytdEarnings: 52500.00,
+            nextPayDate: "2024-02-15"
+        };
+
+        const mockPayslips = [
+            { period: "January 2024", amount: 5250.00, date: "2024-01-31" },
+            { period: "December 2023", amount: 5250.00, date: "2023-12-31" },
+            { period: "November 2023", amount: 5250.00, date: "2023-11-30" }
+        ];
+
+        // Login functionality
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const empId = document.getElementById('employee-id').value;
+            const password = document.getElementById('password').value;
+
+            if (empId === mockUser.id && password === mockUser.password) {
+                document.getElementById('login-section').classList.add('hidden');
+                document.getElementById('dashboard-section').classList.remove('hidden');
+                loadDashboard();
+            } else {
+                alert('Invalid credentials!');
+            }
+        });
+
+        // Load dashboard data
+        function loadDashboard() {
+            document.getElementById('user-name').textContent = mockUser.name;
+            document.getElementById('current-earnings').textContent = mockUser.currentEarnings.toFixed(2);
+            document.getElementById('ytd-earnings').textContent = mockUser.ytdEarnings.toFixed(2);
+            document.getElementById('next-pay-date').textContent = new Date(mockUser.nextPayDate).toLocaleDateString();
+
+            const payslipsContainer = document.getElementById('payslips-container');
+            payslipsContainer.innerHTML = '';
+
+            mockPayslips.forEach(payslip => {
+                const payslipCard = document.createElement('div');
+                payslipCard.className = 'payslip-card bg-white rounded-lg shadow p-6 cursor-pointer';
+                payslipCard.innerHTML = `
+                    <h3 class="font-semibold">${payslip.period}</h3>
+                    <p class="text-2xl font-bold text-gray-800 mt-2">$${payslip.amount.toFixed(2)}</p>
+                    <p class="text-sm text-gray-600 mt-2">Paid on ${new Date(payslip.date).toLocaleDateString()}</p>
+                    <button class="mt-4 text-blue-600 hover:text-blue-800">
+                        <i class="bi bi-download"></i> Download PDF
+                    </button>
+                `;
+                payslipsContainer.appendChild(payslipCard);
+            });
+        }
+
+        // Logout functionality
+        document.getElementById('logout-btn').addEventListener('click', function() {
+            document.getElementById('dashboard-section').classList.add('hidden');
+            document.getElementById('login-section').classList.remove('hidden');
+            document.getElementById('login-form').reset();
+        });
+
+        // Pay request form submission
+        document.getElementById('pay-request-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Request submitted successfully!');
+            this.reset();
+        });
+    </script>
+<script>document.body.addEventListener('wheel', e => { if (!e.ctrlKey) return; e.preventDefault(); return }, { passive: false })</script>
+	</body>
+</html>
